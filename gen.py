@@ -100,10 +100,7 @@ def print_sample(model, tokenizer, device, args):
     text = raw_text + tokenizer.decode(out)
     print(text)
     
-    with open(os.path.join(args.output_dir, 'sample.txt'), 'w') as f: 
-        f.write(text)
     
-    model.train()
 
 class TextDataset(Dataset):
     @staticmethod
@@ -594,68 +591,11 @@ def main():
     args.block_size = min(args.block_size, tokenizer.max_len_single_sentence)
     model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path), config=config)
     model.to(args.device)
-
-    print(200*'/')
-    print(len([param for item in flatten_model(model) 
-            for param in item.parameters()
-                if param.requires_grad]))    # freeze all layers but few first and last
-    if args.unfreeze_level >= 0:
-        flat = flatten_model(model)
-        flat = [item for item in flat if list(item.parameters())]
-        i_start = 3
-        i_end = 1
-        need_grads = set(flat[:i_start+args.unfreeze_level*3]) | set(flat[-(i_end+args.unfreeze_level*3):])
-        for item in flat:
-            requires_grad(item, item in need_grads)
-        print(200*'/')
-        print(len([param for item in flatten_model(model) 
-                for param in item.parameters()
-                    if param.requires_grad]))
-
-    if args.local_rank == 0:
-        torch.distributed.barrier()  # End of barrier to make sure only the first process in distributed training download model & vocab
-
-    logger.info("Training/evaluation parameters %s", args)
-
-    # Training
-    if args.do_train:
-        if args.local_rank not in [-1, 0]:
-            torch.distributed.barrier()  # Barrier to make sure only the first process in distributed training process the dataset, and the others will use the cache
-
-        train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False)
-
-        if args.local_rank == 0:
-            torch.distributed.barrier()
-
-        global_step, tr_loss = train(args, train_dataset, model, tokenizer)
-        logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
-        
-    # Saving best-practices: if you use save_pretrained for the model and tokenizer, you can reload them using from_pretrained()
-    if args.do_train and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-        save_state(args, model, tokenizer, global_step)
-
-        # Load a trained model and vocabulary that you have fine-tuned
-        model = model_class.from_pretrained(args.output_dir)
-        tokenizer = tokenizer_class.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
-        model.to(args.device)
-
-    # Evaluation
-    results = {}
-    if args.do_eval and args.local_rank in [-1, 0]:
-        checkpoints = [args.output_dir]
-        if args.eval_all_checkpoints:
-            checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + '/**/' + WEIGHTS_NAME, recursive=True)))
-            logging.getLogger("transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-        logger.info("Evaluate the following checkpoints: %s", checkpoints)
-        for checkpoint in checkpoints:
-            global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-            model = model_class.from_pretrained(checkpoint)
-            model.to(args.device)
-            result = evaluate(args, model, tokenizer, prefix=global_step)
-            result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
-            results.update(result)
-
-    return results
+    print_sample(model, tokenizer, args.device, args)
+    print_sample(model, tokenizer, args.device, args)
+    print_sample(model, tokenizer, args.device, args)
+    print_sample(model, tokenizer, args.device, args)
+    print_sample(model, tokenizer, args.device, args)
 
 
 if __name__ == "__main__":
