@@ -40,7 +40,7 @@ try:
 except:
     from tensorboardX import SummaryWriter
 
-from tqdm import tqdm, trange
+from tqdm.autonotebook import tqdm, trange
 from dataclasses import dataclass
 from fastprogress import progress_bar
 from fastai.basics import *
