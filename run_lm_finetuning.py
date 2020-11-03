@@ -329,9 +329,9 @@ def train(args, train_dataset, model, tokenizer):
     set_seed(args)  # Added here for reproducibility (even between python 2 and 3)
     try:    
         for _ in train_iterator:
-            epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+            #epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
             #for step, batch in enumerate(epoch_iterator):
-            for step, batch in enumerate(epoch_iterator):
+            for step, batch in enumerate(train_dataloader):
                 inputs, labels = mask_tokens(batch, tokenizer, args) if args.mlm else (batch, batch)
                 inputs = inputs.to(args.device)
                 labels = labels.to(args.device)
