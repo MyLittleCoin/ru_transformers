@@ -329,9 +329,9 @@ def train(args, train_dataset, model, tokenizer):
     set_seed(args)  # Added here for reproducibility (even between python 2 and 3)
     try:    
         for _ in train_iterator:
-            #epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+            epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
             #for step, batch in enumerate(epoch_iterator):
-            for step, batch in enumerate(train_dataloader):
+            #for step, batch in enumerate(train_dataloader):
                 inputs, labels = mask_tokens(batch, tokenizer, args) if args.mlm else (batch, batch)
                 inputs = inputs.to(args.device)
                 labels = labels.to(args.device)
@@ -372,7 +372,7 @@ def train(args, train_dataset, model, tokenizer):
                         tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                         tb_writer.add_scalar('loss', (tr_loss - logging_loss)/args.logging_steps, global_step)
                         logging_loss = tr_loss
-                        #epoch_iterator.set_postfix(MovingLoss=f'{moving_loss.loss:.2f}', Perplexity=f'{torch.exp(torch.tensor(moving_loss.loss)):.2f}')
+                        epoch_iterator.set_postfix(MovingLoss=f'{moving_loss.loss:.2f}', Perplexity=f'{torch.exp(torch.tensor(moving_loss.loss)):.2f}')
 
                     if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
                         # Save model checkpoint
