@@ -40,9 +40,9 @@ try:
 except:
     from tensorboardX import SummaryWriter
 
-from tqdm.autonotebook import tqdm, trange
+from tqdm import tqdm, trange
 from dataclasses import dataclass
-from fastprogress.fastprogress import progress_bar
+from fastprogress import progress_bar
 from fastai.basics import *
 
 from run_generation import sample_sequence
@@ -84,7 +84,7 @@ class MovingLoss():
 
 def print_sample(model, tokenizer, device, args):
     model.eval()
-    raw_text = """ """
+    raw_text = """ Хорошее утро """
     context_tokens = tokenizer.encode(raw_text)
     out = sample_sequence(
         model=model,
@@ -293,6 +293,7 @@ def train(args, train_dataset, model, tokenizer):
             from apex import amp
         except ImportError:
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+        model.to('cuda')
         model, optimizer = amp.initialize(model, optimizer, opt_level=args.fp16_opt_level)
 
     # multi-gpu training (should be after apex fp16 initialization)
@@ -331,7 +332,6 @@ def train(args, train_dataset, model, tokenizer):
         for _ in train_iterator:
             epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
             for step, batch in enumerate(epoch_iterator):
-            #for step, batch in enumerate(train_dataloader):
                 inputs, labels = mask_tokens(batch, tokenizer, args) if args.mlm else (batch, batch)
                 inputs = inputs.to(args.device)
                 labels = labels.to(args.device)
