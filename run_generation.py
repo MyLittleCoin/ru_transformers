@@ -43,10 +43,11 @@ MAX_LENGTH = int(10000)  # Hardcoded max length to avoid infinite loop
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (GPT2Config, OpenAIGPTConfig, XLNetConfig, TransfoXLConfig)), ())
 
 MODEL_CLASSES = {
-    'gpt2': (GPT2LMHeadModel, GPT2Tokenizer),
-    'openai-gpt': (OpenAIGPTLMHeadModel, OpenAIGPTTokenizer),
-    'xlnet': (XLNetLMHeadModel, XLNetTokenizer),
-    'transfo-xl': (TransfoXLLMHeadModel, TransfoXLTokenizer),
+    'gpt2': (GPT2Config, GPT2LMHeadModel, GPT2Tokenizer),
+    'openai-gpt': (OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer),
+    'bert': (BertConfig, BertForMaskedLM, BertTokenizer),
+    'roberta': (RobertaConfig, RobertaForMaskedLM, RobertaTokenizer),
+    'distilbert': (DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer)
 }
 
 # Padding text to help Transformer-XL and XLNet with short prompts as proposed by Aman Rusia
