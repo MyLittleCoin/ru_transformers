@@ -26,11 +26,12 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-from transformers import (GPT2Config, OpenAIGPTConfig, XLNetConfig, TransfoXLConfig, 
-                                    GPT2LMHeadModel, GPT2Tokenizer, 
-                                    OpenAIGPTLMHeadModel, OpenAIGPTTokenizer, 
-                                    XLNetLMHeadModel, XLNetTokenizer, 
-                                    TransfoXLLMHeadModel, TransfoXLTokenizer, )
+from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup, get_constant_schedule_with_warmup, get_cosine_schedule_with_warmup,
+                                  BertConfig, BertForMaskedLM, BertTokenizer,
+                                  GPT2Config, GPT2LMHeadModel, GPT2Tokenizer,
+                                  OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer,
+                                  RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
+                                  DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer)
 
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
